@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Item Details</title>
+    <style>
+        :root { --orange: #f39c12; --bg: #0f0f0f; }
+        body { background: var(--bg); color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: #1a1a1a; padding: 40px; border-radius: 24px; border: 1px solid var(--orange); text-align: center; width: 400px; }
+        img { width: 100%; border-radius: 12px; margin-bottom: 20px; }
+        .btn { width: 100%; padding: 15px; background: var(--orange); border: none; font-weight: bold; cursor: pointer; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card" id="detailContainer">
+        <h1 id="name">Loading...</h1>
+        <img id="itemImg" src="">
+        <p id="info"></p>
+        <button class="btn" onclick="alert('Please visit the Lost & Found office to claim!')">CLAIM ITEM</button>
+        <br><br><a href="loser-gallery.html" style="color:#888">Back to Gallery</a>
+    </div>
+
+    <script>
+        // We get the selected item from localStorage where the gallery saved it
+        const item = JSON.parse(localStorage.getItem('selectedItem'));
+        if(item) {
+            document.getElementById('name').innerText = item.name;
+            document.getElementById('itemImg').src = item.image;
+            document.getElementById('info').innerHTML = `<b>Found at:</b> ${item.location}<br><b>Description:</b> ${item.desc || 'No details'}`;
+        } else {
+            document.getElementById('name').innerText = "Item not found";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verification | Lost & Found</title>
+    <style>
+        :root { --primary-orange: #f39c12; --bg-dark: #0f0f0f; }
+        body { margin: 0; font-family: sans-serif; background: radial-gradient(circle, #2c1a05, var(--bg-dark)); height: 100vh; display: flex; justify-content: center; align-items: center; color: white; }
+        .card { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 24px; border: 1px solid rgba(243,156,18,0.2); backdrop-filter: blur(15px); text-align: center; width: 350px; }
+        input { display: block; width: 100%; margin: 10px 0; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #222; color: white; box-sizing: border-box; }
+        .btn { background: var(--primary-orange); border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; color: black; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Identity Verification</h2>
+        <form id="vForm">
+            <input type="text" id="idNumInput" placeholder="ID Number (LF-2026-9912)" required>
+            <input type="file" required>
+            <button type="submit" class="btn">Verify & Enter</button>
+        </form>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqc9Hg0HlFtaEfYaQCxm9wXHjUNtX5q-Y",
+            authDomain: "lostfoundbackup.firebaseapp.com",
+            databaseURL: "https://lostfoundbackup-default-rtdb.firebaseio.com",
+            projectId: "lostfoundbackup",
+            storageBucket: "lostfoundbackup.firebasestorage.app",
+            messagingSenderId: "470646348177",
+            appId: "1:470646348177:web:7b05e6a999512bb6cd6230"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        document.getElementById('vForm').onsubmit = (e) => {
+            e.preventDefault();
+            const idValue = document.getElementById('idNumInput').value;
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+
+            if(!user) return alert("Log in first!");
+
+            database.ref('users/' + user.username).update({
+                studentId: idValue,
+                isVerified: true
+            }).then(() => {
+                user.studentId = idValue;
+                user.isVerified = true;
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                window.location.href = 'selection.html';
+            });
+        };
+    </script>
+</body>
+</html>

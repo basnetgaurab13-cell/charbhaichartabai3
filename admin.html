@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cloud Admin | Lost & Found</title>
+    <style>
+        :root { --orange: #f39c12; --red: #be1e2d; --bg: #0f0f0f; }
+        body { background: var(--bg); color: white; font-family: sans-serif; padding: 40px; }
+        .header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--orange); padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #111; }
+        th, td { padding: 12px; border: 1px solid #333; text-align: left; }
+        th { color: var(--orange); text-transform: uppercase; font-size: 14px; }
+        .btn-del { background: var(--red); color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+        .btn-del:hover { background: #ff0000; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>CLOUD ADMIN TERMINAL</h1>
+        <button onclick="location.reload()" style="background:#333; color:white; border:none; padding:10px; cursor:pointer;">Refresh Cloud</button>
+    </div>
+
+    <h2>📦 Found Items (Global Inventory)</h2>
+    <table id="foundTable">
+        <thead><tr><th>Item Name</th><th>Location</th><th>Founder</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>🔍 Missing Items (Lost Board)</h2>
+    <table id="missingTable">
+        <thead><tr><th>Item Name</th><th>Owner</th><th>Posted Date</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+    </table>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqc9Hg0HlFtaEfYaQCxm9wXHjUNtX5q-Y",
+            authDomain: "lostfoundbackup.firebaseapp.com",
+            databaseURL: "https://lostfoundbackup-default-rtdb.firebaseio.com",
+            projectId: "lostfoundbackup",
+            storageBucket: "lostfoundbackup.firebasestorage.app",
+            messagingSenderId: "470646348177",
+            appId: "1:470646348177:web:7b05e6a999512bb6cd6230"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Real-time listener for Found Items
+        database.ref('globalItems').on('value', (snap) => {
+            const data = snap.val();
+            const tbody = document.querySelector('#foundTable tbody');
+            tbody.innerHTML = '';
+            if (data) Object.keys(data).forEach(id => {
+                const it = data[id];
+                tbody.innerHTML += `<tr>
+                    <td><b>${it.name}</b></td>
+                    <td>${it.location}</td>
+                    <td>${it.founder || 'Anon'}</td>
+                    <td><button class="btn-del" onclick="deleteItem('globalItems', '${id}')">DELETE</button></td>
+                </tr>`;
+            });
+        });
+
+        // Real-time listener for Missing Items
+        database.ref('requestedItems').on('value', (snap) => {
+            const data = snap.val();
+            const tbody = document.querySelector('#missingTable tbody');
+            tbody.innerHTML = '';
+            if (data) Object.keys(data).forEach(id => {
+                const it = data[id];
+                tbody.innerHTML += `<tr>
+                    <td><b>${it.name}</b></td>
+                    <td>${it.owner}</td>
+                    <td>${it.postDate}</td>
+                    <td><button class="btn-del" onclick="deleteItem('requestedItems', '${id}')">REMOVE</button></td>
+                </tr>`;
+            });
+        });
+
+        function deleteItem(path, id) {
+            if(confirm("Permanently delete this from Cloud?")) {
+                database.ref(path + '/' + id).remove();
+            }
+        }
+    </script>
+</body>
+</html>

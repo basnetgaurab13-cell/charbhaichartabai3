@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Lost & Found</title>
+    <style>
+        body { background-color: #0f0f0f; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background-color: #261a0d; padding: 40px; border-radius: 20px; text-align: center; width: 350px; border: 1px solid #444; }
+        h1 { margin: 0 0 20px 0; font-size: 28px; font-weight: bold; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 5px; border: 1px solid #444; background: #d9e6f7; color: #333; box-sizing: border-box; }
+        .btn { width: 100%; padding: 12px; background: #be1e2d; border: none; color: white; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; }
+        .links-container { margin-top: 15px; display: flex; flex-direction: column; gap: 10px; }
+        a { color: #f39c12; text-decoration: none; font-size: 13px; }
+        .staff-link { color: #888; font-size: 11px; text-decoration: underline; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>LOGIN</h1>
+        <form id="loginForm">
+            <input type="text" id="user" placeholder="Username" required>
+            <input type="password" id="pass" placeholder="Password" required>
+            <button type="submit" class="btn">LOGIN</button>
+        </form>
+        <div class="links-container">
+            <a href="signup.html">Don't have an account? Sign Up</a>
+            <span class="staff-link" onclick="staffLogin()">Enter as Staff</span>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqc9Hg0HlFtaEfYaQCxm9wXHjUNtX5q-Y",
+            authDomain: "lostfoundbackup.firebaseapp.com",
+            databaseURL: "https://lostfoundbackup-default-rtdb.firebaseio.com",
+            projectId: "lostfoundbackup",
+            storageBucket: "lostfoundbackup.firebasestorage.app",
+            messagingSenderId: "470646348177",
+            appId: "1:470646348177:web:7b05e6a999512bb6cd6230"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Regular Login
+        document.getElementById('loginForm').onsubmit = (e) => {
+            e.preventDefault();
+            const u = document.getElementById('user').value.trim();
+            const p = document.getElementById('pass').value;
+
+            database.ref('users/' + u).once('value', (snap) => {
+                const data = snap.val();
+                if (data && data.pass === p) {
+                    localStorage.setItem('currentUser', JSON.stringify(data));
+                    window.location.href = 'selection.html';
+                } else { alert("Invalid Credentials!"); }
+            });
+        };
+
+        // Staff "Secret" Bypass
+        function staffLogin() {
+            const key = prompt("Enter Staff Security Key:");
+            if (key === "STAFF1234") { // You can change this key
+                localStorage.setItem('currentUser', JSON.stringify({name: "Staff Member", role: "admin"}));
+                window.location.href = 'admin.html';
+            } else if (key !== null) {
+                alert("Unauthorized Access!");
+            }
+        }
+    </script>
+</body>
+</html>

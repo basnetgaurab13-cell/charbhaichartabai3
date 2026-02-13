@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Selection | Lost & Found</title>
+    <style>
+        :root { --orange: #f39c12; --bg: #0f0f0f; }
+        body { margin: 0; font-family: sans-serif; background: radial-gradient(circle, #2c1a05, var(--bg)); height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; color: white; }
+        
+        .welcome-text { margin-bottom: 5px; color: var(--orange); letter-spacing: 2px; font-size: 14px; text-transform: uppercase; }
+        h1 { margin: 0 0 40px 0; font-size: 36px; letter-spacing: 3px; }
+
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 600px; width: 95%; }
+        
+        /* The "Clean Box" you like */
+        .choice-card { 
+            background: rgba(255,255,255,0.05); 
+            padding: 40px 20px; 
+            border-radius: 20px; 
+            border: 1px solid #333; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            text-decoration: none; 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+        .choice-card:hover { border-color: var(--orange); background: rgba(243, 156, 18, 0.1); transform: translateY(-8px); }
+        .icon { font-size: 40px; margin-bottom: 15px; }
+        .choice-card h3 { margin: 0; font-size: 18px; letter-spacing: 1px; }
+
+        .nav-footer { margin-top: 40px; display: flex; gap: 20px; }
+        .btn-alt { padding: 12px 30px; border: 1px solid var(--orange); border-radius: 50px; color: var(--orange); text-decoration: none; font-weight: bold; font-size: 12px; transition: 0.3s; }
+        .btn-alt:hover { background: var(--orange); color: black; }
+        .btn-logout { border-color: #be1e2d; color: #be1e2d; }
+        .btn-logout:hover { background: #be1e2d; color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="welcome-text" id="welcomeMsg">Welcome, Student</div>
+    <h1>CHOOSE YOUR PATH</h1>
+    
+    <div class="grid">
+        <a href="founder-report.html" class="choice-card">
+            <span class="icon">🤝</span>
+            <h3>Report Found</h3>
+        </a>
+        <a href="lost-report.html" class="choice-card">
+            <span class="icon">📢</span>
+            <h3>Report Lost</h3>
+        </a>
+        <a href="loser-gallery.html" class="choice-card">
+            <span class="icon">🔍</span>
+            <h3>View Found Box</h3>
+        </a>
+        <a href="lost-board.html" class="choice-card">
+            <span class="icon">📋</span>
+            <h3>View Lost Board</h3>
+        </a>
+    </div>
+
+    <div class="nav-footer">
+        <a href="dashboard.html" class="btn-alt">MY DASHBOARD</a>
+        <a href="#" onclick="logout()" class="btn-alt btn-logout">LOGOUT</a>
+    </div>
+
+    <script>
+        // Check if user is actually logged in
+        const user = JSON.parse(localStorage.getItem('currentUser'));
+        
+        if(user) {
+            document.getElementById('welcomeMsg').innerText = "Welcome, " + user.name;
+        } else {
+            // If no user found in memory, kick them back to login
+            window.location.href = 'login.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

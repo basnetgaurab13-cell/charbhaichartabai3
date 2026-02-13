@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lost Board | Cloud View</title>
+    <style>
+        :root { --red: #be1e2d; --bg: #0f0f0f; }
+        body { background: var(--bg); color: white; font-family: sans-serif; padding: 40px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .card { background: #1a1a1a; border-radius: 12px; border: 1px solid #333; overflow: hidden; }
+        .card img { width: 100%; height: 180px; object-fit: cover; background: #222; }
+        .info { padding: 15px; }
+        .tag { background: var(--red); color: white; font-size: 10px; padding: 3px 8px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 LOST BOARD</h1>
+    <div class="grid" id="lostGrid">Loading from Cloud...</div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqc9Hg0HlFtaEfYaQCxm9wXHjUNtX5q-Y",
+            authDomain: "lostfoundbackup.firebaseapp.com",
+            databaseURL: "https://lostfoundbackup-default-rtdb.firebaseio.com",
+            projectId: "lostfoundbackup",
+            storageBucket: "lostfoundbackup.firebasestorage.app",
+            messagingSenderId: "470646348177",
+            appId: "1:470646348177:web:7b05e6a999512bb6cd6230"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        database.ref('requestedItems').on('value', (snap) => {
+            const data = snap.val();
+            const grid = document.getElementById('lostGrid');
+            grid.innerHTML = '';
+            if (data) {
+                Object.values(data).forEach(it => {
+                    grid.innerHTML += `
+                        <div class="card">
+                            <img src="${it.image || ''}">
+                            <div class="info">
+                                <span class="tag">MISSING</span>
+                                <h3>${it.name}</h3>
+                                <p style="font-size:13px; color:#888;">${it.desc}</p>
+                                <hr style="border:0; border-top:1px solid #333;">
+                                <small>Owner: ${it.owner}</small>
+                            </div>
+                        </div>`;
+                });
+            } else {
+                grid.innerHTML = "<p>No missing items reported.</p>";
+            }
+        });
+    </script>
+</body>
+</html>
